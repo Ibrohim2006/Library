@@ -1,4 +1,3 @@
-import uuid
 from django.db import models
 from core.base import BaseModel
 
@@ -35,8 +34,8 @@ class BookAvailabilityModel(BaseModel):
         ("paid_reading", "Paid reading (online)"),
         ("purchase", "Purchase"),
     )
-    book = models.ForeignKey(Book, on_delete=models.CASCADE, related_name="availability_book")
-    source = models.ForeignKey(Source, on_delete=models.CASCADE, related_name="availability_source")
+    book = models.ForeignKey(BookModel, on_delete=models.CASCADE, related_name="availability_book")
+    source = models.ForeignKey(SourceModel, on_delete=models.CASCADE, related_name="availability_source")
     availability_type = models.CharField(max_length=32, choices=AVAILABILITY_TYPE_CHOICES)
 
     location_name = models.CharField(max_length=255, blank=True, null=True)
