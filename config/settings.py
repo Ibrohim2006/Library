@@ -39,6 +39,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     # Custom apps
     'authentication',
+    'library',
     # Installed apps
     'rest_framework',
     'drf_yasg',
