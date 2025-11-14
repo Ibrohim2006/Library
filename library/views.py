@@ -144,8 +144,8 @@ class SearchHistoryViewSet(viewsets.ViewSet):
         serializer = SearchHistorySerializer(queryset, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
 
-class BookSearchViewSet(viewsets.ViewSet):
 
+class BookSearchViewSet(viewsets.ViewSet):
     permission_classes = [IsAuthenticated]
 
     @swagger_auto_schema(
@@ -189,7 +189,7 @@ class BookSearchViewSet(viewsets.ViewSet):
                 f"title_{language}",
                 f"author_{language}",
                 f"description_{language}",
-                f"genre_{language}",
+                f"genre__name_{language}"
             ]
 
             q_obj = Q()

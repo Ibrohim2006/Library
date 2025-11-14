@@ -1,11 +1,10 @@
 import logging
 from typing import List
 from asgiref.sync import async_to_sync
-from google import genai
+import google.generativeai as genai
 from config.settings import GEMINI_API_KEY
 
-
-client = genai.Client(api_key=GEMINI_API_KEY)
+genai.configure(api_key=GEMINI_API_KEY)
 
 
 async def _ai_search_books_async(query: str, language: str = "uz") -> List[str]:
@@ -18,20 +17,17 @@ async def _ai_search_books_async(query: str, language: str = "uz") -> List[str]:
             f"Javob tili: {language}."
         )
 
-        chat = client.aio.chats.create(model="gemini-2.5-flash")
-
-        prompt = (
-            f"{system_instruction}\n\n"
-            f"Foydalanuvchi so'rovi: {query}\n\n"
-            "Faqat kalit so'zlarni vergul bilan ajratib yozing."
+        model = genai.GenerativeModel(
+            model_name="gemini-1.5-flash",
+            system_instruction=system_instruction
         )
 
-        response = await chat.send_message(prompt)
+        prompt = f"Foydalanuvchi so'rovi: {query}\n\nFaqat kalit so'zlarni vergul bilan ajratib yozing."
 
-        text = response.text or ""
+        response = await model.generate_content_async(prompt)
+        text = response.text.strip() if response.text else ""
 
         keywords = [k.strip() for k in text.split(",") if k.strip()]
-
         return keywords or [query]
 
     except Exception as e:
