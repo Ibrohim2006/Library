@@ -1,9 +1,9 @@
 from django.urls import path
-from .views import AuthenticationViewSet
+from .views import GoogleLoginAPIView, GoogleAuthCallbackAPIView
+
+app_name = 'authentication'
 
 urlpatterns = [
-    path("register/", AuthenticationViewSet.as_view({"post": "register"}), name="register"),
-    path("login/", AuthenticationViewSet.as_view({"post": "login"}), name="login"),
-    path("logout/", AuthenticationViewSet.as_view({"post": "logout"}), name="logout"),
-    path("google/", AuthenticationViewSet.as_view({"post": "google_signin"}), name="google"),
+    path("google/", GoogleLoginAPIView.as_view(), name="google_login"),
+    path("google/callback/", GoogleAuthCallbackAPIView.as_view(), name="google_callback"),
 ]

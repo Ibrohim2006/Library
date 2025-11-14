@@ -1,17 +1,16 @@
 from django.contrib import admin
-from .models import BookModel, SourceModel, BookAvailabilityModel
+from modeltranslation.admin import TranslationAdmin
+from .models import GenreModel, BookModel
+
+
+@admin.register(GenreModel)
+class GenreAdmin(admin.ModelAdmin):
+    list_display = ("id", "name")
+    search_fields = ("name",)
 
 
 @admin.register(BookModel)
 class BookAdmin(admin.ModelAdmin):
-    list_display = ("title", "author", "language", "year")
-
-
-@admin.register(SourceModel)
-class SourceAdmin(admin.ModelAdmin):
-    list_display = ("name", "type", "base_url")
-
-
-@admin.register(BookAvailabilityModel)
-class BookAvailabilityAdmin(admin.ModelAdmin):
-    list_display = ("book", "source", "availability_type",)
+    list_display = ("id", "title", "author", "genre", "year", "language")
+    list_filter = ("language", "genre", "year")
+    search_fields = ("title", "author", "description")

@@ -7,7 +7,7 @@ from core.base import BaseModel
 class UserModel(AbstractUser, BaseModel):
     username = None
     email = models.EmailField(unique=True, blank=False, null=False)
-    google = models.CharField(max_length=255, unique=True, null=True, blank=True)
+    google = models.CharField(max_length=255, blank=True, null=True)
 
     is_verified = models.BooleanField(default=False)
 
