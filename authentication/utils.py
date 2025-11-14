@@ -1,14 +1,9 @@
-import jwt
-from config.settings import JWT_SECRET, JWT_ALGORITHM, JWT_EXPIRE_DAYS
-from datetime import datetime, timedelta
+from rest_framework_simplejwt.tokens import RefreshToken
 
 
-def create_jwt_token(user) -> str:
-    payload = {
-        "id": str(user.id),
-        "email": user.email,
-        "name": user.get_full_name() or user.email,
-        "exp": datetime.now() + timedelta(days=JWT_EXPIRE_DAYS),
-        "iat": datetime.now(),
+def create_jwt_token(user) -> dict:
+    refresh = RefreshToken.for_user(user)
+    return {
+        "access": str(refresh.access_token),
+        "refresh": str(refresh),
     }
-    return jwt.encode(payload, JWT_SECRET, algorithm=JWT_ALGORITHM)

@@ -62,3 +62,11 @@ class SearchHistorySerializer(serializers.ModelSerializer):
     class Meta:
         model = SearchHistory
         fields = ["id", "query", "created_at"]
+
+
+class SearchRequestSerializer(serializers.Serializer):
+    query = serializers.CharField(max_length=255)
+    language = serializers.ChoiceField(
+        choices=[("uz", "Uzbek"), ("ru", "Russian"), ("en", "English")],
+        default="uz"
+    )
