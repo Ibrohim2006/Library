@@ -13,7 +13,18 @@ https://docs.djangoproject.com/en/4.2/ref/settings/
 from pathlib import Path
 import os
 from datetime import timedelta
+from dotenv import load_dotenv
+import environ
 
+env = environ.Env(DEBUG=(bool, False))
+
+current_path = environ.Path(__file__) - 1
+site_root = current_path - 1
+env_file = site_root(".env")
+if os.path.exists(env_file):
+    environ.Env.read_env(env_file=env_file)
+
+load_dotenv()
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
@@ -21,12 +32,12 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/4.2/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-hv!+thyue0ysjr&_@-sz+@7mr-!!(&@f8uk#n35+0f!5$cka3q'
+SECRET_KEY = env('SECRET_KEY')
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = env('DEBUG')
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = env.list("ALLOWED_HOSTS", default=["*"])
 
 # Application definition
 
@@ -45,12 +56,15 @@ INSTALLED_APPS = [
     'drf_yasg',
     "rest_framework_simplejwt",
     "rest_framework_simplejwt.token_blacklist",
+    "modeltranslation",
+
 ]
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
+    "django.middleware.locale.LocaleMiddleware",
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
@@ -108,8 +122,24 @@ AUTH_PASSWORD_VALIDATORS = [
 # Internationalization
 # https://docs.djangoproject.com/en/4.2/topics/i18n/
 
-LANGUAGE_CODE = 'en-us'
+from django.utils.translation import gettext_lazy as _
 
+LANGUAGE_CODE = 'en'
+
+LANGUAGES = (
+    ('uz', _('Uzbek')),
+    ('ru', _('Russian')),
+    ('en', _('English')),
+)
+
+MODELTRANSLATION_DEFAULT_LANGUAGE = 'en'
+MODELTRANSLATION_LANGUAGES = (
+    'uz', 'ru', 'en',
+)
+
+LOCALE_PATHS = [
+    BASE_DIR / 'locale',
+]
 TIME_ZONE = 'Asia/Tashkent'
 
 USE_I18N = True
@@ -164,4 +194,8 @@ SWAGGER_SETTINGS = {
     "USE_SESSION_AUTH": False,
 }
 
-GOOGLE_CLIENT_ID = "382754521601-j1hqr700o206capc66uqadntmggimjsa.apps.googleusercontent.com"
+GOOGLE_CLIENT_ID = env('GOOGLE_CLIENT_ID')
+GOOGLE_CLIENT_SECRET = env('GOOGLE_CLIENT_SECRET')
+JWT_SECRET = env('JWT_SECRET')
+JWT_ALGORITHM = env('JWT_ALGORITHM')
+JWT_EXPIRE_DAYS = env.int("JWT_EXPIRE_DAYS")
