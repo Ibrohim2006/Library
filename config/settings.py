@@ -32,12 +32,12 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/4.2/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = env('SECRET_KEY')
+SECRET_KEY = "django-insecure-hv!+thyue0ysjr&_@-sz+@7mr-!!(&@f8uk#n35+0f!5$cka3q"
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = env('DEBUG')
+DEBUG = True
 
-ALLOWED_HOSTS = env.list("ALLOWED_HOSTS", default=["*"])
+ALLOWED_HOSTS = ["*"]
 
 # Application definition
 
@@ -100,17 +100,6 @@ DATABASES = {
         'NAME': BASE_DIR / 'db.sqlite3',
     }
 }
-
-# DATABASES = {
-#     "default": {
-#         "ENGINE": "django.db.backends.postgresql",
-#         "NAME": os.getenv("POSTGRES_DB"),
-#         "USER": os.getenv("POSTGRES_USER"),
-#         "PASSWORD": os.getenv("POSTGRES_PASSWORD"),
-#         "HOST": os.getenv("POSTGRES_HOST", "localhost"),
-#         "PORT": os.getenv("POSTGRES_PORT", "5432"),
-#     }
-# }
 
 # Password validation
 # https://docs.djangoproject.com/en/4.2/ref/settings/#auth-password-validators
@@ -206,6 +195,6 @@ SWAGGER_SETTINGS = {
 }
 
 
-GOOGLE_CLIENT_ID = env('GOOGLE_CLIENT_ID')
-GOOGLE_CLIENT_SECRET = env('GOOGLE_CLIENT_SECRET')
-GEMINI_API_KEY = env('GEMINI_API_KEY')
+GOOGLE_CLIENT_ID = "382754521601-j1hqr700o206capc66uqadntmggimjsa.apps.googleusercontent.com"
+GOOGLE_CLIENT_SECRET = "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"
+GEMINI_API_KEY = "AIzaSyC58gt6kY-ZUXu3V0TgOpp72pD5bf9juew"
