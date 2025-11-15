@@ -209,4 +209,3 @@ __marimo__/
 !**/migrations/__init__.py
 
 media/*
-/staticfiles/
