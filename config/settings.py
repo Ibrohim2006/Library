@@ -32,12 +32,12 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/4.2/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = "django-insecure-hv!+thyue0ysjr&_@-sz+@7mr-!!(&@f8uk#n35+0f!5$cka3q"
+SECRET_KEY = env('SECRET_KEY')
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = env('DEBUG')
 
-ALLOWED_HOSTS = ["*"]
+ALLOWED_HOSTS = env.list("ALLOWED_HOSTS", default=["*"])
 
 # Application definition
 
@@ -194,7 +194,6 @@ SWAGGER_SETTINGS = {
     "USE_SESSION_AUTH": False,
 }
 
-
-GOOGLE_CLIENT_ID = "382754521601-j1hqr700o206capc66uqadntmggimjsa.apps.googleusercontent.com"
-GOOGLE_CLIENT_SECRET = "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"
-GEMINI_API_KEY = "AIzaSyC58gt6kY-ZUXu3V0TgOpp72pD5bf9juew"
+GOOGLE_CLIENT_ID = env('GOOGLE_CLIENT_ID')
+GOOGLE_CLIENT_SECRET = env('GOOGLE_CLIENT_SECRET')
+GEMINI_API_KEY = env('GEMINI_API_KEY')
