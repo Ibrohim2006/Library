@@ -19,6 +19,14 @@ COPY . /app
 ENV PYTHONDONTWRITEBYTECODE=1 \
     PYTHONUNBUFFERED=1
 
+# Bu port faqat image ichida "expose" bo‘ladi, Railway baribir $PORT beradi
 EXPOSE 8000
 
-CMD ["sh", "-c", "gunicorn config.wsgi:application --bind 0.0.0.0:${PORT}"]
+# Muhim qism: collectstatic + migrate + superuser + gunicorn
+CMD sh -c "
+  python manage.py collectstatic --noinput && \
+  python manage.py makemigrations --noinput && \
+  python manage.py migrate --noinput && \
+  python manage.py shell -c \"from django.contrib.auth import get_user_model; User=get_user_model(); email='admin@admin.com'; password='admin'; u=User.objects.filter(email=email).first(); print('Superuser already exists' if u else 'Creating superuser'); u or User.objects.create_superuser(email=email, password=password)\" && \
+  gunicorn config.wsgi:application --bind 0.0.0.0:${PORT:-8000}
+"
