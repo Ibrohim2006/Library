@@ -37,7 +37,7 @@ urlpatterns = i18n_patterns(
     path("api/v1/auth/", include("authentication.urls")),
     path("api/v1/library/", include("library.urls")),
     re_path(r"^swagger/$", schema_view.with_ui("swagger", cache_timeout=0), name="schema-swagger-ui"), # type: ignore
-    prefix_default_language=False,
+    # prefix_default_language=False,
 )
 
 urlpatterns += [

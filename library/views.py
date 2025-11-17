@@ -137,7 +137,7 @@ class SearchHistoryViewSet(viewsets.ViewSet):
         operation_summary="Retrieve search history",
         operation_description="Get last 20 search queries of the current authenticated user.",
         responses={200: SearchHistorySerializer(many=True), },
-        tags=["Search History"],
+        tags=["Books"],
     )
     def list(self, request):
         queryset = SearchHistory.objects.filter(user=request.user).order_by("-created_at")[:20]
@@ -175,6 +175,7 @@ class BookSearchViewSet(viewsets.ViewSet):
             400: "Bad Request",
             500: "Server Error",
         },
+        tags=["Books"]
     )
     def create(self, request, *args, **kwargs):
         serializer = SearchRequestSerializer(data=request.data)
@@ -184,7 +185,12 @@ class BookSearchViewSet(viewsets.ViewSet):
         language = serializer.validated_data["language"]
 
         try:
-            keywords = ai_search_books(query=query, language=language)
+            keywords = ai_search_books(query=query, language=language) or []
+
+            normalized_query = query.strip()
+            if normalized_query and normalized_query not in keywords:
+                keywords.insert(0, normalized_query)
+
             fields = [
                 f"title_{language}",
                 f"author_{language}",
@@ -198,6 +204,7 @@ class BookSearchViewSet(viewsets.ViewSet):
                 for field in fields:
                     kw_filter |= Q(**{f"{field}__icontains": kw})
                 q_obj |= kw_filter
+
 
             books_qs = BookModel.objects.filter(q_obj).distinct()[:50]
             results = BookSerializer(books_qs, many=True).data

@@ -33,7 +33,6 @@ class GoogleLoginAPIView(APIView):
         redirect_uri = request.build_absolute_uri(
             reverse("authentication:google_callback")
         )
-        print("REDIRECT_URI ===>", redirect_uri)
 
         django_request = request._request
         return oauth.google.authorize_redirect(django_request, redirect_uri)
