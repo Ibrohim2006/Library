@@ -2,11 +2,7 @@
 
 ## 🚀 Ishga tushirish bo‘yicha qo‘llanma
 
-### 🤖 Telegram botni ishga tushirish
-
-### 🌐 Backend server ishga tushirish
-
-Serverni ishga tushirish uchun quyidagi komandani yozing:
+Proyektni ishga tushirish uchun quyidagi komandani yozing:
 
 ```bash
    python3 -m venv venv
