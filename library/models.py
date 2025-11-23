@@ -23,13 +23,13 @@ class GenreModel(BaseModel):
 
 
 class BookModel(BaseModel):
-    author = models.CharField(max_length=255)
-    title = models.CharField(max_length=255)
-    description = models.TextField()
-    genre = models.ForeignKey(GenreModel, on_delete=models.CASCADE, related_name="book_genre")
-    year = models.PositiveIntegerField()
+    author = models.CharField(max_length=255, null=True, blank=True)
+    title = models.CharField(max_length=255, null=True, blank=True)
+    description = models.TextField(null=True, blank=True)
+    genre = models.ForeignKey(GenreModel, on_delete=models.CASCADE, related_name="book_genre", null=True, blank=True)
+    year = models.PositiveIntegerField(null=True, blank=True)
     language = models.CharField(max_length=20, choices=LANGUAGE_CHOICES, default="en")
-    image = models.ImageField(upload_to="book/image")
+    image = models.ImageField(upload_to="book/image", null=True, blank=True)
     youtube_url = models.URLField(blank=True, null=True)
     library_url = models.URLField(blank=True, null=True)
     store_url = models.URLField(blank=True, null=True)
