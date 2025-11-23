@@ -31,7 +31,7 @@ services:
       db:
         condition: service_healthy
     ports:
-      - "8000:8000"
+      - "8001:8001"
     volumes:
       - .:/app
     working_dir: /app

@@ -19,4 +19,4 @@ echo "Collect static files..."
 python manage.py collectstatic --noinput
 
 echo "Starting Gunicorn (production mode)..."
-python manage.py runserver 0.0.0.0:8000
+python manage.py runserver 0.0.0.0:8001
