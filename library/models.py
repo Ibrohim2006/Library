@@ -33,6 +33,7 @@ class BookModel(BaseModel):
     youtube_url = models.URLField(blank=True, null=True)
     library_url = models.URLField(blank=True, null=True)
     store_url = models.URLField(blank=True, null=True)
+    file = models.FileField(upload_to="book/file", blank=True, null=True)
 
     def __str__(self):
         return f"{self.title} ({self.author})"
