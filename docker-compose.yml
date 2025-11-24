@@ -33,6 +33,7 @@ services:
     volumes:
       - .:/app
       - ./media:/app/media
+      - /home/lenovo/Downloads/TelegramDesktop/ChatExport_2025-11-23-1/files:/app/media
     working_dir: /app
 
 volumes:
