@@ -42,6 +42,33 @@ class BookModel(BaseModel):
         verbose_name_plural = "Books"
         verbose_name = "Book"
 
+class SavedMoldel(BaseModel):
+    user=models.ForeignKey(UserModel, on_delete=models.CASCADE,related_name="saved_books")
+    book = models.ForeignKey(BookModel, on_delete=models.CASCADE,related_name="saved_by")
+    class Meta:
+        db_table = "saved"
+        verbose_name_plural = "Saved"
+        verbose_name = "Saved"
+        unique_together = ("user", "book")
+
+class CommentModel(BaseModel):
+    user=models.ForeignKey(UserModel, on_delete=models.CASCADE,related_name="comments")
+    book = models.ForeignKey(BookModel, on_delete=models.CASCADE,related_name="comments")
+    text = models.TextField()
+    class Meta:
+        db_table = "comment"
+        verbose_name_plural = "Comments"
+        verbose_name = "Comment"
+
+class RatingModel(BaseModel):
+    user=models.ForeignKey(UserModel, on_delete=models.CASCADE,related_name="ratings")
+    book = models.ForeignKey(BookModel, on_delete=models.CASCADE,related_name="ratings")
+    stars = models.PositiveIntegerField()
+    class Meta:
+        db_table = "rating"
+        verbose_name_plural = "Ratings"
+        verbose_name = "Rating"
+        unique_together = ("user", "book")
 
 class SearchHistory(BaseModel):
     user = models.ForeignKey(UserModel, on_delete=models.CASCADE, related_name="search_histories", )

@@ -1,11 +1,15 @@
+# from tokenize import Comment
+
+from rest_framework.decorators import action
 from django.db.models import Q
 from rest_framework import status, viewsets
-from rest_framework.permissions import IsAuthenticated
+from rest_framework.permissions import IsAuthenticated, AllowAny
 from rest_framework.response import Response
 from drf_yasg.utils import swagger_auto_schema
 from drf_yasg import openapi
-from .models import BookModel, SearchHistory
-from .serializers import BookSerializer, SearchHistorySerializer, SearchRequestSerializer
+from .models import BookModel, SearchHistory, RatingModel, SavedMoldel, CommentModel
+from .serializers import BookSerializer, SearchHistorySerializer, SearchRequestSerializer, CommentSerializer, \
+    RatingSerializer, SavedSerializer
 from .utils import ai_search_books
 
 
@@ -70,6 +74,12 @@ class BookViewSet(viewsets.ViewSet):
         tags=["Books"],
     )
     def list(self, request):
+        from django.utils import translation
+
+        lang = request.GET.get("lang")
+        if lang in ("uz", "en", "ru"):
+            translation.activate(lang)
+
         queryset = BookModel.objects.select_related("genre").all()
         search = request.query_params.get("search")
         author = request.query_params.get("author")
@@ -230,3 +240,56 @@ class BookSearchViewSet(viewsets.ViewSet):
                 {"detail": "Internal server error", "error": str(e)},
                 status=status.HTTP_500_INTERNAL_SERVER_ERROR,
             )
+
+
+
+class CommentViewSet(viewsets.ModelViewSet):
+    # permission_classes = [IsAuthenticated]
+    queryset = CommentModel.objects.select_related("user","book").all()
+    serializer_class = CommentSerializer
+
+    def get_permissions(self):
+        if self.action in ("create", "update", "partial_update","destroy"):
+            return [IsAuthenticated()]
+        return [AllowAny()]
+
+    def perform_create(self, serializer):
+        serializer.save(user=self.request.user)
+
+class RatingViewSet(viewsets.ModelViewSet):
+    queryset = RatingModel.objects.select_related("user","book").all()
+    serializer_class = RatingSerializer
+
+    def get_permissions(self):
+        if self.action in ("create", "update", "partial_update","destroy"):
+            return [AllowAny()]
+        return [AllowAny()]
+    def perform_create(self, serializer):
+        user=self.request.user
+        book = serializer.validated_data["book"]
+        if RatingModel.objects.filter(user=user,book=book).exists():
+            raise serializers.ValidationError("YOu already reted this book, use for update")
+        serializer.save(user=user,book=book)
+
+    @action(detail=False, methods=["post"], permission_classes=[IsAuthenticated])
+    def upsert(self, request):
+        user = self.request.user
+        book_id = request.data.get["book_id"]
+        starts=int(request.data.get("starts",0))
+        book=get_object_or_404(BookModel,id=book_id)
+        obj,created = RatingModel.objects.update_or_create(user=user,book=book,defaults={"stars":starts})
+        return Response(RatingSerializer(obj).data,status=status.HTTP_200_OK)
+
+class SavedViewSet(viewsets.ModelViewSet):
+    queryset = SavedMoldel.objects.select_related("user","book").all()
+    serializer_class = SavedSerializer
+    def get_permissions(self):
+        if self.action in ("create","destroy","list","retrieve"):
+            return [IsAuthenticated]
+        return [AllowAny()]
+
+    def get_queryset(self):
+        user = self.request.user
+        return SavedMoldel.objects.filter(user=self.request.user).select_related("book")
+    def perform_create(self, serializer):
+        serializer.save(user=self.request.user)

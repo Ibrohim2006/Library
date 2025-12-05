@@ -1,6 +1,6 @@
 from django.contrib import admin
 from modeltranslation.admin import TranslationAdmin
-from .models import GenreModel, BookModel, SearchHistory
+from .models import GenreModel, BookModel, SearchHistory, CommentModel, RatingModel, SavedMoldel
 
 
 @admin.register(GenreModel)
@@ -16,3 +16,6 @@ class BookAdmin(admin.ModelAdmin):
     search_fields = ("title", "author", "description")
 
 admin.site.register(SearchHistory)
+admin.site.register(CommentModel)
+admin.site.register(RatingModel)
+admin.site.register(SavedMoldel)

@@ -1,6 +1,9 @@
 from django.conf import settings
+from django.db.models import Sum
 from rest_framework import serializers
-from .models import GenreModel, BookModel, SearchHistory
+
+from books.serializers import ReviewSerializer
+from .models import GenreModel, BookModel, SearchHistory, RatingModel, CommentModel, SavedMoldel
 
 
 def get_lang_from_request(request):
@@ -34,9 +37,47 @@ class GenreSerializer(serializers.ModelSerializer):
         return data
 
 
+
+class SearchHistorySerializer(serializers.ModelSerializer):
+    class Meta:
+        model = SearchHistory
+        fields = ["id", "query", "created_at"]
+
+
+class SearchRequestSerializer(serializers.Serializer):
+    query = serializers.CharField(max_length=255)
+    language = serializers.ChoiceField(
+        choices=[("uz", "Uzbek"), ("ru", "Russian"), ("en", "English")],
+        default="uz"
+    )
+
+class CommentSerializer(serializers.ModelSerializer):
+    username=serializers.CharField(source="user.username", read_only=True)
+    class Meta:
+        model = CommentModel
+        fields="__all__"
+        read_only_fields=("user","created_at")
+
+class RatingSerializer(serializers.ModelSerializer):
+    username=serializers.CharField(source="user.username", read_only=True)
+    class Meta:
+        model=RatingModel
+        fields="__all__"
+        read_only_fields=("user","created_at")
+
+class SavedSerializer(serializers.ModelSerializer):
+    class Meta:
+        model=SavedMoldel
+        fields="__all__"
+        read_only_fields=("user","created_at")
+
+
+
 class BookSerializer(serializers.ModelSerializer):
     genre = GenreSerializer(read_only=True)
-
+    review = ReviewSerializer(read_only=True)
+    rating = RatingSerializer(read_only=True)
+    avg_rating = serializers.SerializerMethodField()
     class Meta:
         model = BookModel
         fields = ["id", "author", "title", "description", "genre", "year", "language", "image", "youtube_url",
@@ -58,15 +99,9 @@ class BookSerializer(serializers.ModelSerializer):
             data["description"] = description_translated
         return data
 
-class SearchHistorySerializer(serializers.ModelSerializer):
-    class Meta:
-        model = SearchHistory
-        fields = ["id", "query", "created_at"]
+    def get_avg_rating(self, obj):
+        qs=obj.rating.all()
+        if not qs.exists():
+            return None
+        return round(sum([r.stars for r in qs]) / qs.count(), 2)
 
-
-class SearchRequestSerializer(serializers.Serializer):
-    query = serializers.CharField(max_length=255)
-    language = serializers.ChoiceField(
-        choices=[("uz", "Uzbek"), ("ru", "Russian"), ("en", "English")],
-        default="uz"
-    )
