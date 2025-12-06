@@ -1,5 +1,5 @@
 # from tokenize import Comment
-
+from django.shortcuts import get_object_or_404
 from rest_framework.decorators import action
 from django.db.models import Q
 from rest_framework import status, viewsets
@@ -290,6 +290,9 @@ class SavedViewSet(viewsets.ModelViewSet):
 
     def get_queryset(self):
         user = self.request.user
+        if user.is_anonymous:
+            # variant A: bo'sh queryset qaytarish (hech qanday natija)
+            return SavedMoldel.objects.none()
         return SavedMoldel.objects.filter(user=self.request.user).select_related("book")
     def perform_create(self, serializer):
         serializer.save(user=self.request.user)
