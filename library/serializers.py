@@ -80,7 +80,7 @@ class BookSerializer(serializers.ModelSerializer):
     avg_rating = serializers.SerializerMethodField()
     class Meta:
         model = BookModel
-        fields = ["id", "author", "title", "description", "genre", "year", "language", "image", "youtube_url",
+        fields = ["id", "author", "title", "description", "genre", "year", "language", "image", "youtube_url", "avg_rating", "review", "rating",
                   "library_url", "store_url",
                   ]
 
