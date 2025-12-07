@@ -6,10 +6,12 @@ from rest_framework.response import Response
 from rest_framework import status
 from drf_yasg.utils import swagger_auto_schema
 from drf_yasg import openapi
-from authentication.models import UserModel
-from authentication.oauth import oauth
-from authentication.serializers import UserSerializer, GoogleAuthResponseSerializer
-from authentication.utils import create_jwt_token
+from rest_framework_simplejwt.tokens import RefreshToken
+
+from .models import UserModel
+from .oauth import oauth
+from .serializers import UserSerializer, GoogleAuthResponseSerializer,LoginSerializer,RegisterSeriliazer
+from .utils import create_jwt_token
 
 logger = logging.getLogger(__name__)
 
@@ -113,3 +115,37 @@ class GoogleAuthCallbackAPIView(APIView):
                 {"detail": f"Auth error: {str(e)}"},
                 status=status.HTTP_400_BAD_REQUEST,
             )
+
+
+class RegisterAPIView(APIView):
+    permission_classes = [AllowAny]
+    def post(self, request):
+        serializer=RegisterSeriliazer(data=request.data)
+        if serializer.is_valid():
+            user = serializer.save()
+            refresh = RefreshToken.for_user(user)
+            return Response({
+                "message":"foydalanuvchi muvaffaqiyatli ro'yxatdan o'tdi",
+                "user": UserSerializer(user).data,
+                "refresh": str(refresh),
+                "access": str(refresh.access_token),
+
+            },status=status.HTTP_201_CREATED
+            )
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+class LoginAPIView(APIView):
+    permission_classes = [AllowAny]
+    def post(self, request):
+        serializer=LoginSerializer(data=request.data)
+        if serializer.is_valid():
+            user = serializer.validated_data["user"]
+            refresh = RefreshToken.for_user(user)
+            return Response({
+                'message':"login muvaffaqiyatli",
+                'user': UserSerializer(user).data,
+                'refresh': str(refresh),
+                'access': str(refresh.access_token),
+
+            },status=status.HTTP_200_OK)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
